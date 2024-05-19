@@ -244,6 +244,88 @@ bool hasLoop(Node* head) {
   return false;
 }
 
+int lengthLoop(Node* head) {
+  int count = 0;
+  Node* cur = head;
+  Node* prev;
+  unordered_map<Node*, bool> visited;
+  while(cur != nullptr) {
+    prev = cur;
+    cur = cur->next;
+    try {
+      // Detected a loop
+      if (visited.at(cur)) {
+        count = 1;
+        while (cur != prev) {
+          cur = cur->next;
+          count++;
+        }
+        break;
+      }
+    }
+    catch (const out_of_range& e) {
+      visited[cur] = true;
+    }
+  }
+  return count;
+}
+
+bool floydHareAndTortoise(Node* head) {
+  Node* slow_p = head;
+  Node* fast_p = head;
+
+  while(slow_p && fast_p && fast_p->next) {
+    slow_p = slow_p->next;
+    fast_p = fast_p->next->next;
+
+    if (slow_p == fast_p) {
+      return true;
+    }
+  }
+  return false;
+}
+
+int floydHareAndTortoiseLength(Node* head) {
+  Node* slow_p = head;
+  Node* fast_p = head;
+
+  while(slow_p && fast_p && fast_p->next) {
+    slow_p = slow_p->next;
+    fast_p = fast_p->next->next;
+
+    if (slow_p == fast_p) {
+      int count = 1;
+      while (slow_p != fast_p->next) {
+        fast_p = fast_p->next;
+        count++;
+      }
+      return count;
+    }
+  }
+  return 0;
+}
+
+Node* intersectionTwoList(Node* a, Node* b) {
+  Node dummy;
+  Node* temp = &dummy;
+  dummy.next = nullptr;
+
+  while (a != nullptr && b != nullptr) {
+    if (a->data == b->data) {
+      push(&(temp->next), a->data);
+      temp = temp->next;
+      a = a->next;
+      b = b->next;
+    }
+    else if (a->data < b->data) {
+      a = a->next;
+    }
+    else {
+      b = b->next;
+    }
+  }
+  return dummy.next;
+}
 
 int main() { 
   Node* head = new Node{ 10 };
@@ -264,5 +346,35 @@ int main() {
   cout << boolalpha << hasLoop(emptyList) << endl;
   circulizeList(oneElemList);
   cout << boolalpha << hasLoop(oneElemList) << endl;
-  
+  // 1 (Using floyd's cycle detection algorithm)
+  cout << boolalpha << floydHareAndTortoise(head) << endl;
+  cout << boolalpha << floydHareAndTortoise(emptyList) << endl;
+  cout << boolalpha << floydHareAndTortoise(oneElemList) << endl;
+  // 2
+  cout << lengthLoop(head) << endl;
+  cout << lengthLoop(emptyList) << endl;
+  cout << lengthLoop(oneElemList) << endl;
+  // 2 (Using floyd's cycle detection algorithm)
+  cout << floydHareAndTortoiseLength(head) << endl;
+  cout << floydHareAndTortoiseLength(emptyList) << endl;
+  cout << floydHareAndTortoiseLength(oneElemList) << endl;
+  // 3
+  Node* sortedList1 = new Node{ 1 };
+  append(sortedList1, 2);
+  append(sortedList1, 4);
+  append(sortedList1, 6);
+  append(sortedList1, 9);
+  append(sortedList1, 10);
+  append(sortedList1, 85);
+  append(sortedList1, 86);
+  Node* sortedList2 = new Node{ 3 };
+  append(sortedList2, 4);
+  append(sortedList2, 7);
+  append(sortedList2, 9);
+  append(sortedList2, 11);
+  append(sortedList2, 36);
+  append(sortedList2, 86);
+
+  Node* intersection = intersectionTwoList(sortedList1, sortedList2);
+  traverseList(intersection);
 }
