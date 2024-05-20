@@ -327,6 +327,53 @@ Node* intersectionTwoList(Node* a, Node* b) {
   return dummy.next;
 }
 
+Node* getLastNode(Node* head) {
+  Node* cur = head;
+  while (cur->next != nullptr) {
+    cur = cur->next;
+  }
+  return cur;
+}
+
+Node* partition(Node* first, Node* last) {
+  Node* pivot = first;
+  Node* cur = first;
+  int temp;
+
+  while (cur != nullptr && cur != last) {
+    if (cur->data < last->data) {
+      pivot = first;
+
+      // Swap
+      temp = first->data;
+      first->data = cur->data;
+      cur->data = temp;
+
+      first = first->next;
+    }
+    cur = cur->next;
+  }
+  temp = first->data;
+  first->data = last->data;
+  last->data = temp;
+  return pivot;
+}
+
+void quickSortList(Node* first, Node* last) {
+  if (first == last) {
+    return;
+  }
+
+  Node* pi = partition(first, last);
+  if (pi != nullptr && pi->next != nullptr) {
+    quickSortList(pi->next, last);
+  }
+
+  if (pi != nullptr && first != pi) {
+    quickSortList(first, pi);
+  }
+}
+
 int main() { 
   Node* head = new Node{ 10 };
   append(head, 23);
@@ -374,7 +421,21 @@ int main() {
   append(sortedList2, 11);
   append(sortedList2, 36);
   append(sortedList2, 86);
-
+  // 4
   Node* intersection = intersectionTwoList(sortedList1, sortedList2);
   traverseList(intersection);
+
+  // 5
+  Node* head2 = new Node{ 10 };
+  append(head2, 23);
+  append(head2, 49);
+  append(head2, 63);
+  append(head2, 99);
+  append(head2, 100);
+  append(head2, 85);
+  append(head2, 85);
+  Node* first = head2;
+  Node* last = getLastNode(head2);
+  quickSortList(first, last);
+  traverseList(head2);
 }
