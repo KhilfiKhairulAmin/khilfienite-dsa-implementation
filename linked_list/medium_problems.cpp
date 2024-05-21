@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 
@@ -190,7 +191,7 @@ void circulizeList(Node* head) {
   }
 
   Node* temp = head;
-  while (temp->next != nullptr) {
+  while (temp->next != nullptr && temp->next != head) {
     temp = temp->next;
   }
   temp->next = head;
@@ -374,6 +375,35 @@ void quickSortList(Node* first, Node* last) {
   }
 }
 
+Node* splitCircularList(Node* head) {
+  if (head == nullptr) {
+    return nullptr;
+  }
+  // Calculate length of circular list
+  Node* temp = head->next;
+  Node* end;
+  int len = 1;
+  while (temp != head) {
+    end = temp;  // Will point to the end node
+    temp = temp->next;
+    len += 1;
+  }
+
+  Node* list1 = head;
+  int traverseN = (len+1)/ 2 - 1;
+  while (traverseN--) {
+    list1 = list1->next;
+  }
+  Node* list2 = list1->next;
+  list1->next = head;
+  Node* half = list2;
+  while (list2 != end) {
+    list2 = list2->next;
+  }
+  list2->next = half;
+  return half;
+}
+
 int main() { 
   Node* head = new Node{ 10 };
   append(head, 23);
@@ -438,4 +468,11 @@ int main() {
   Node* last = getLastNode(head2);
   quickSortList(first, last);
   traverseList(head2);
+
+  // 6
+  push(&head2, 7);
+  circulizeList(head2);
+  Node* list2 = splitCircularList(head2);
+  traverseList(head2);
+  traverseList(list2);
 }
