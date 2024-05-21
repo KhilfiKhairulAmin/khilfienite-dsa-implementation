@@ -404,6 +404,30 @@ Node* splitCircularList(Node* head) {
   return half;
 }
 
+void splitCircularListFloyd(Node* head, Node** head1_ref, Node** head2_ref) {
+  if (head == nullptr) {
+    return;
+  }
+  
+  Node* fast_ptr = head;
+  Node* slow_ptr = head;
+
+  while (fast_ptr->next != head && fast_ptr->next->next != head) {
+    fast_ptr = fast_ptr->next->next;
+    slow_ptr = slow_ptr->next;
+  }
+
+  *head1_ref = head;
+  *head2_ref = slow_ptr->next;
+  slow_ptr->next = head;
+
+  if (fast_ptr->next->next == head) {
+    fast_ptr = fast_ptr->next;
+  }
+
+  fast_ptr->next = *head2_ref;
+}
+
 int main() { 
   Node* head = new Node{ 10 };
   append(head, 23);
@@ -470,9 +494,15 @@ int main() {
   traverseList(head2);
 
   // 6
-  push(&head2, 7);
+  // push(&head2, 7);
   circulizeList(head2);
-  Node* list2 = splitCircularList(head2);
-  traverseList(head2);
-  traverseList(list2);
+  // Node* list2 = splitCircularList(head2);
+  // traverseList(head2);
+  // traverseList(list2);
+  Node* half1;
+  Node* half2;
+  splitCircularListFloyd(head2, &half1, &half2);
+  traverseList(half1);
+  traverseList(half2);
+
 }
